@@ -1,0 +1,22 @@
+This is a Discogs api wrapper written in objective c. 
+http://www.discogs.com/
+
+The library is in the form of code drop-in, just copy in your project structure and drag/add to Xcode.
+
+The library requires JSONKit lib to compile and work. https://github.com/johnezang/JSONKit
+
+The main api entry point is DiscoGsApi that exposes all the basic api functions.
+
+	- (GSSearch*)           Search:(NSString*)searchstring;
+	- (GSSearch*)           SearchReleases:(NSString*)searchstring;
+	- (GSSearch*)           SearchArtists:(NSString*)searchstring;
+	- (GSSearch*)           SearchLabels:(NSString*)searchstring;
+
+	- (NSImage *)           GetImage:(NSString *)imagepath;
+
+	- (GSRelease *)         GetRelease:(NSString *)releaseid;
+	- (GSMasterRelease *)   GetMasterRelease:(NSString *)masterid;
+	- (GSArtist *)          GetArtist:(NSString *)artistname withReleases:(BOOL)releases;
+	- (GSLabel *)           GetLabel:(NSString *)labelname withReleases:(BOOL)releases;
+
+if you use this software add credits about the author (me!).
