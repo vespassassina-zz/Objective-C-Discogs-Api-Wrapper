@@ -9,8 +9,17 @@ NSString *  _apiClient  = @"DoctorTunes";
 @implementation DiscoGsApi
 
 
-- (void)dealloc
-{
+- (void)dealloc{
+    
+    [lastSearch release];
+    [lastSearchString release];
+    
+    [lastJson release];
+    [lastJsonString release];
+    
+    [lastImage release];
+    [lastImageString release];
+    
     [super dealloc];
 }
 
@@ -19,6 +28,13 @@ NSString *  _apiClient  = @"DoctorTunes";
     NSString *url = [NSString stringWithFormat:@"%@/%@",_apiUri,[partialUrl stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]];
     
     NSLog(@"GetJsonForUrl: %@",url);
+    
+//    if([lastJsonString isEqualToString:url] && lastJson )
+//    {
+//        NSLog(@"JSon Cache Hit!");
+//        return lastJson;
+//    }
+    
     
     NSURL * URL = [NSURL URLWithString:url];
     NSURLRequestCachePolicy policy = NSURLRequestReturnCacheDataElseLoad;
@@ -31,7 +47,7 @@ NSString *  _apiClient  = @"DoctorTunes";
     NSError *error = nil;
     NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&error];
     
-    if (error != nil) {
+    if (error != nil || data == nil) {
         return nil;
     }
     
@@ -39,20 +55,36 @@ NSString *  _apiClient  = @"DoctorTunes";
     JSONDecoder *decoder = [JSONDecoder decoder];
     NSDictionary *items = [decoder objectWithData:data];
     
-    //NSLog(@"encoded: %@",items);
+    //caching
+//    [lastJsonString release];
+//    [lastJson release];
+//    lastJsonString = [url retain];
+//    lastJson = [items retain];
     
     return items;
-
 }
 
 #pragma mark - Search
 
-- (GSSearch*)Search:(NSString*)searchstring{
-//    NSCharacterSet *doNotWant = [NSCharacterSet characterSetWithCharactersInString:@"/:.'\"!-_,^|@#<>()\\%$£+]["];
-//    searchstring = [[searchstring componentsSeparatedByCharactersInSet: doNotWant] componentsJoinedByString: @" "];
+- (GSSearch*)   Search:(NSString*)searchstring{
 
+    //cache check
+    if([lastSearchString isEqualToString:searchstring] && lastSearch )
+    {
+        NSLog(@"Search Cache Hit!");
+        return lastSearch;
+    }
+    
+    //no cache, get the data
     NSDictionary *data = [self GetJsonForUrl:[NSString stringWithFormat:@"search?q=%@",searchstring]];
     GSSearch *search = [[[GSSearch alloc] initWithDictionary:[[data objectForKey:@"resp"]objectForKey:@"search"]] autorelease];
+    
+    //caching
+    [lastSearchString release];
+    [lastSearch release];
+    lastSearchString = [searchstring retain];
+    lastSearch = [search retain];
+    
     return search;
 }
 - (GSSearch*)   SearchReleases:(NSString*)searchstring{
@@ -72,10 +104,15 @@ NSString *  _apiClient  = @"DoctorTunes";
 #pragma mark - Image
 - (NSImage *) GetImage:(NSString *)imagepath{
     
-    //NSString *url = [NSString stringWithFormat:@"%@/%@",_apiUri,[imagepath stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]];
     NSString *url = imagepath;
-    
     NSLog(@"GetImage: %@",url);
+    
+    //cache check
+    if([lastImageString isEqualToString:url] && lastImage )
+    {
+        NSLog(@"Image Cache Hit!");
+        return lastImage;
+    }
     
     NSURL * URL = [NSURL URLWithString:url];
     NSURLRequestCachePolicy policy = NSURLRequestReturnCacheDataElseLoad;
@@ -93,6 +130,13 @@ NSString *  _apiClient  = @"DoctorTunes";
     }
     
     NSImage *img = [[[NSImage alloc] initWithData:data] autorelease];
+    
+    //caching
+    [lastImageString release];
+    [lastImage release];
+    lastImageString = [url retain];
+    lastImage = [img retain];
+    
     return img;
 }
 

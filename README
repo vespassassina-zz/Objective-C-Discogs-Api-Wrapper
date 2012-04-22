@@ -19,4 +19,4 @@ The main api entry point is DiscoGsApi that exposes all the basic api functions.
 	- (GSArtist *)          GetArtist:(NSString *)artistname withReleases:(BOOL)releases;
 	- (GSLabel *)           GetLabel:(NSString *)labelname withReleases:(BOOL)releases;
 
-if you use this software add credits about the author (me!).
+if you use this software add credits about the author (Diego Trinciarelli).

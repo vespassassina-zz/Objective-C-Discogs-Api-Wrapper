@@ -19,7 +19,14 @@ extern NSString *   _apiClient;
 
 @interface DiscoGsApi : NSObject
 {
-
+    GSSearch *lastSearch;
+    NSString *lastSearchString;
+    
+    NSImage *lastImage;
+    NSString *lastImageString;
+    
+    NSDictionary *lastJson;
+    NSString *lastJsonString;
 }
 
 - (NSDictionary*)GetJsonForUrl:(NSString*)url;
